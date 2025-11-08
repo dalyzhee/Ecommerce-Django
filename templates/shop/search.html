@@ -1,0 +1,68 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Search Results - ShopHub{% endblock %}
+
+{% block content %}
+<div class="search-page">
+    <h1>
+        {% if query %}
+            Search Results for "{{ query }}"
+        {% else %}
+            Search Products
+        {% endif %}
+    </h1>
+    
+    {% if query %}
+        <p class="search-info">Found {{ products.count }} product(s)</p>
+        
+        {% if products %}
+            <div class="product-grid">
+                {% for product in products %}
+                    <div class="product-card">
+                        <a href="{{ product.get_absolute_url }}">
+                            {% if product.image %}
+                                <img src="{{ product.image.url }}" alt="{{ product.name }}">
+                            {% else %}
+                                <img src="{% static 'images/no-image.png' %}" alt="No image">
+                            {% endif %}
+                        </a>
+                        
+                        <div class="product-info">
+                            <h3>
+                                <a href="{{ product.get_absolute_url }}">
+                                    {{ product.name }}
+                                </a>
+                            </h3>
+                            
+                            <p class="product-category">{{ product.category.name }}</p>
+                            
+                            <p class="product-price">${{ product.price }}</p>
+                            
+                            <div class="product-actions">
+                                {% if product.stock > 0 %}
+                                    <form action="{% url 'shop:cart_add' product.id %}" method="post">
+                                        {% csrf_token %}
+                                        <button type="submit" class="btn btn-primary">
+                                            Add to Cart
+                                        </button>
+                                    </form>
+                                {% else %}
+                                    <button class="btn btn-disabled" disabled>Out of Stock</button>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="no-results">
+                <p>No products found matching your search.</p>
+                <a href="{% url 'shop:product_list' %}" class="btn btn-primary">
+                    Browse All Products
+                </a>
+            </div>
+        {% endif %}
+    {% endif %}
+</div>
+{% endblock %}

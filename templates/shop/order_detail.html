@@ -1,0 +1,77 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Order #{{ order.id }} - ShopHub{% endblock %}
+
+{% block content %}
+<div class="order-detail-page">
+    <h1>Order #{{ order.id }}</h1>
+    
+    <div class="order-status">
+        <span class="status-badge status-{{ order.status }}">
+            {{ order.get_status_display }}
+        </span>
+        {% if order.paid %}
+            <span class="paid-badge">✓ Paid</span>
+        {% else %}
+            <span class="unpaid-badge">Unpaid</span>
+        {% endif %}
+    </div>
+    
+    <div class="order-info">
+        <div class="info-section">
+            <h3>Order Information</h3>
+            <p><strong>Order Date:</strong> {{ order.created_at|date:"F d, Y" }}</p>
+            <p><strong>Status:</strong> {{ order.get_status_display }}</p>
+            <p><strong>Total:</strong> ${{ order.get_total_cost }}</p>
+        </div>
+        
+        <div class="info-section">
+            <h3>Shipping Address</h3>
+            <p>{{ order.first_name }} {{ order.last_name }}</p>
+            <p>{{ order.address }}</p>
+            <p>{{ order.city }}, {{ order.postal_code }}</p>
+            <p>{{ order.email }}</p>
+        </div>
+    </div>
+    
+    <div class="order-items">
+        <h3>Order Items</h3>
+        <table class="order-table">
+            <thead>
+                <tr>
+                    <th>Product</th>
+                    <th>Price</th>
+                    <th>Quantity</th>
+                    <th>Total</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in order.items.all %}
+                    <tr>
+                        <td>{{ item.product.name }}</td>
+                        <td>${{ item.price }}</td>
+                        <td>{{ item.quantity }}</td>
+                        <td>${{ item.get_cost }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+            <tfoot>
+                <tr class="total-row">
+                    <td colspan="3"><strong>Total:</strong></td>
+                    <td><strong>${{ order.get_total_cost }}</strong></td>
+                </tr>
+            </tfoot>
+        </table>
+    </div>
+    
+    <div class="order-actions">
+        <a href="{% url 'shop:order_list' %}" class="btn btn-secondary">
+            Back to Orders
+        </a>
+        <a href="{% url 'shop:product_list' %}" class="btn btn-primary">
+            Continue Shopping
+        </a>
+    </div>
+</div>
+{% endblock %}

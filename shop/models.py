@@ -16,7 +16,7 @@ class Category(models.Model):
         return self.name
     
     def get_absolute_url(self):
-        return reverse("shop:category_product", args=[self.slug])
+        return reverse("shop:category_products", args=[self.slug])
     
 class Product(models.Model):
     category = models.ForeignKey(Category, related_name='products', on_delete=models.CASCADE)
@@ -56,7 +56,7 @@ class Cart(models.Model):
         return sum(item.get_cost() for item in self.items.all())
     
     def get_total_items(self):
-        return sum(item.quatity for item in self.items.all())
+        return sum(item.quantity for item in self.items.all())
     
 class CartItem(models.Model):
     """Individual items in a cart"""
